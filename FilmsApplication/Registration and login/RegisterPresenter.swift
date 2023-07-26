@@ -7,27 +7,19 @@
 
 import Foundation
 
+protocol RegisterPresentationLogic: AnyObject {
+    func presentUser(newState: AuthCases)
+}
+
 class RegisterPresenter {
-    let interactor: RegisterInteractorInput
-    weak var view: RegisterViewInput?
-    
-    init(interactor: RegisterInteractorInput) {
-        self.interactor = interactor
-    }
+    weak var view: RegisterDisplayLogic?
 }
 
-extension RegisterPresenter: RegisterViewOutput {
-    func viewDidTapButton(username: String, email: String, password: String) {
-        interactor.checkFields(username: username, email: email, password: password)
+extension RegisterPresenter: RegisterPresentationLogic {
+    func presentUser(newState: AuthCases) {
+        let viewModel = Models.FetchUser.ViewModel(state: newState)
+        view?.display(viewModel: viewModel)
     }
-    
-    
+        
 }
 
-extension RegisterPresenter: RegisterInteractorOutput {
-    func didChangeState(newState: AuthCases) {
-        view?.display(status: newState)
-    }
-    
-    
-}

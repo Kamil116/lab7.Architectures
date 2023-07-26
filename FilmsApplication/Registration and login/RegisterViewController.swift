@@ -14,11 +14,11 @@ enum AuthCases {
 }
 
 protocol RegisterViewOutput {
-    func viewDidTapButton(username: String, email: String, password: String)
+    func viewDidTapButton(request: Models.FetchUser.Request)
 }
 
-protocol RegisterViewInput: AnyObject {
-    func display(status: AuthCases)
+protocol RegisterDisplayLogic: AnyObject {
+    func display(viewModel: Models.FetchUser.ViewModel)
 }
 
 final class RegisterViewController: UIViewController {
@@ -31,12 +31,13 @@ final class RegisterViewController: UIViewController {
     private let signUpButton = UIButton()
     private let registrationLabel = UILabel()
     
-    let output: RegisterViewOutput
+    let interactor: RegisterInteractor
     
-    init(output: RegisterViewOutput) {
-        self.output = output
+    init(interactor: RegisterInteractor) {
+        self.interactor = interactor
         super.init(nibName: nil, bundle: nil)
         setupView()
+        
     }
     
     required init?(coder: NSCoder) {
@@ -46,7 +47,8 @@ final class RegisterViewController: UIViewController {
     
     //MARK: Private methods
     @objc private func signUpButtonClicked() {
-        output.viewDidTapButton(username: usernameTextField.text ?? "", email: emailTextField.text ?? "", password: passwordTextField.text ?? "")
+        let user = Models.FetchUser.Request(username: usernameTextField.text ?? "", password: passwordTextField.text ?? "", email: emailTextField.text ?? "")
+        interactor.checkFields(request: user)
     }
     
 }
@@ -141,9 +143,9 @@ private extension RegisterViewController {
     }
 }
 
-extension RegisterViewController: RegisterViewInput {
-    func display(status: AuthCases) {
-        switch status {
+extension RegisterViewController: RegisterDisplayLogic {
+    func display(viewModel: Models.FetchUser.ViewModel) {
+        switch viewModel.state {
         case .success:
             let alert = UIAlertController(title: "Success!", message: "", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))

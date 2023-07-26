@@ -20,10 +20,11 @@ class RegisterFactory {
     
     func produce() -> UIViewController {
         let interactor = RegisterInteractor()
-        let presenter = RegisterPresenter(interactor: interactor)
-        let viewController = RegisterViewController(output: presenter)
+        let presenter = RegisterPresenter()
         
-        interactor.output = presenter
+        interactor.presenter = presenter
+        
+        let viewController = RegisterViewController(interactor: interactor)
         presenter.view = viewController
         
         return viewController

@@ -7,24 +7,23 @@
 
 import Firebase
 
-protocol RegisterInteractorInput {
-    func checkFields(username: String, email: String, password: String)
+protocol RegisterLogic {
+    func checkFields(request: Models.FetchUser.Request)
 }
-
-protocol RegisterInteractorOutput: AnyObject {
-    func didChangeState(newState: AuthCases)
-}
-
 
 class RegisterInteractor {
-    weak var output: RegisterInteractorOutput?
+    var presenter: RegisterPresentationLogic?
 }
 
-extension RegisterInteractor: RegisterInteractorInput {
-    func checkFields(username: String, email: String, password: String) {
+extension RegisterInteractor: RegisterLogic {
+    
+    func checkFields(request: Models.FetchUser.Request) {
+        let username = request.username
+        let password = request.password
+        let email = request.email
         guard !password.isEmpty, !email.isEmpty, !username.isEmpty
         else {
-            output?.didChangeState(newState: .failure)
+            presenter?.presentUser(newState: .failure)
             return
         }
         
@@ -33,11 +32,11 @@ extension RegisterInteractor: RegisterInteractorInput {
                 let ref = Database.database(url: "https://filmsapplication-6d462-default-rtdb.europe-west1.firebasedatabase.app").reference().child("users")
                 ref.child(result!.user.uid).updateChildValues(["username": username, "email": email])
                 
-                output?.didChangeState(newState: .success)
+                presenter?.presentUser(newState: .success)
             } else {
-                output?.didChangeState(newState: .failure)
+                presenter?.presentUser(newState: .failure)
             }
         }
-        
     }
+    
 }

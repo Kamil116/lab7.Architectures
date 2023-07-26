@@ -20,6 +20,7 @@
 		8E9EE5622A716C90007D2F88 /* RegisterInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9EE5612A716C90007D2F88 /* RegisterInteractor.swift */; };
 		8E9EE5642A7171DB007D2F88 /* RegisterFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9EE5632A7171DB007D2F88 /* RegisterFactory.swift */; };
 		8EA191742A6A87E300FB0947 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8EA191732A6A87E300FB0947 /* GoogleService-Info.plist */; };
+		8EA8DB922A7183D5004AF5A4 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA8DB912A7183D5004AF5A4 /* Models.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		8E9EE5612A716C90007D2F88 /* RegisterInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterInteractor.swift; sourceTree = "<group>"; };
 		8E9EE5632A7171DB007D2F88 /* RegisterFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterFactory.swift; sourceTree = "<group>"; };
 		8EA191732A6A87E300FB0947 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		8EA8DB912A7183D5004AF5A4 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +53,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8E8C14332A717EFF00F970C0 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8EA8DB912A7183D5004AF5A4 /* Models.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		8E94C8292A67146800A3F6BF = {
 			isa = PBXGroup;
 			children = (
@@ -70,6 +80,7 @@
 		8E94C8342A67146800A3F6BF /* FilmsApplication */ = {
 			isa = PBXGroup;
 			children = (
+				8E8C14332A717EFF00F970C0 /* Models */,
 				B46342C42A6D832B006EDD2D /* Registration and login */,
 				8E94C8352A67146800A3F6BF /* AppDelegate.swift */,
 				8E94C8372A67146800A3F6BF /* SceneDelegate.swift */,
@@ -177,6 +188,7 @@
 				8E9466422A6824D100CB86ED /* EyeButton.swift in Sources */,
 				8E94C83A2A67146800A3F6BF /* RegisterViewController.swift in Sources */,
 				8E9EE5642A7171DB007D2F88 /* RegisterFactory.swift in Sources */,
+				8EA8DB922A7183D5004AF5A4 /* Models.swift in Sources */,
 				8E94C8362A67146800A3F6BF /* AppDelegate.swift in Sources */,
 				8E94C8382A67146800A3F6BF /* SceneDelegate.swift in Sources */,
 			);
