@@ -8,132 +8,45 @@
 import UIKit
 import Firebase
 
+enum AuthCases {
+    case success
+    case failure
+}
+
+protocol RegisterViewOutput {
+    func viewDidTapButton(username: String, email: String, password: String)
+}
+
+protocol RegisterViewInput: AnyObject {
+    func display(status: AuthCases)
+}
 
 final class RegisterViewController: UIViewController {
     
     //MARK: Private properties
     private let usernameTextField = GeneralTextField(placeholder: "Enter your username")
-    private let emailTextField = GeneralTextField(placeholder: TextsEnum.enterEmail.rawValue)
-    private let passwordTextField = GeneralTextField(placeholder: TextsEnum.enterPassword.rawValue)
+    private let emailTextField = GeneralTextField(placeholder: "Enter your email")
+    private let passwordTextField = GeneralTextField(placeholder: "Enter your password")
     
     private let signUpButton = UIButton()
-    private let signInButton = UIButton()
-    
-    private let askLabel = UILabel()
     private let registrationLabel = UILabel()
     
-    private let eyeButtonForPassword = EyeButton()
+    let output: RegisterViewOutput
     
-    private var isEyeButtonForPasswordPrivate = true
-    
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
+    init(output: RegisterViewOutput) {
+        self.output = output
+        super.init(nibName: nil, bundle: nil)
         setupView()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     
     //MARK: Private methods
     @objc private func signUpButtonClicked() {
-        guard let password = passwordTextField.text, !password.isEmpty, let email = emailTextField.text, !email.isEmpty, let username = usernameTextField.text, !username.isEmpty
-        else {
-            showAlertWithWarning(TextsEnum.fillFields.rawValue)
-            return
-        }
-        
-        Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
-            if error == nil {
-                let ref = Database.database(url: "https://filmsapplication-6d462-default-rtdb.europe-west1.firebasedatabase.app").reference().child("users")
-                ref.child(result!.user.uid).updateChildValues(["username": self.usernameTextField.text!, "email": self.emailTextField.text!])
-                
-                self.goToMainPage()
-                
-            } else {
-                print(error.debugDescription)
-                self.showAlertWithWarning(TextsEnum.invalidData.rawValue)
-            }
-        }
-    }
-    
-    func goToMainPage() {
-        let tab = UITabBarController()
-        
-        let home = UINavigationController(rootViewController: HomeViewController())
-        home.title = "Home"
-        let search = UINavigationController(rootViewController: SearchViewController())
-        search.title = "Search"
-        let profile = UINavigationController(rootViewController: ProfileViewController())
-        profile.title = "Profile"
-        
-        
-        
-        tab.tabBar.tintColor = .black
-        
-        
-        
-        
-        tab.setViewControllers([home, search, profile], animated: false)
-        
-        guard let items = tab.tabBar.items else { return }
-        
-        let images = ["house", "magnifyingglass.circle", "person.circle"]
-        
-        for i in 0...2 {
-            items[i].image = UIImage(systemName: images[i])
-        }
-        
-        tab.modalPresentationStyle = .fullScreen
-        
-        navigationController?.present(tab, animated: true)
-    }
-    
-    @objc private func signInButtonClicked() {
-        navigationController?.pushViewController(LoginViewController(), animated: true)
-        
-        //        let tab = UITabBarController()
-        //
-        //        let home = UINavigationController(rootViewController: HomeViewController())
-        //        home.title = "Home"
-        //        let search = UINavigationController(rootViewController: SearchViewController())
-        //        search.title = "Search"
-        //        let profile = UINavigationController(rootViewController: ProfileViewController())
-        //        profile.title = "Profile"
-        //
-        //
-        //
-        //        tab.tabBar.tintColor = .black
-        //
-        //
-        //
-        //
-        //        tab.setViewControllers([home, search, profile], animated: false)
-        //
-        //        guard let items = tab.tabBar.items else { return }
-        //
-        //        let images = ["house", "magnifyingglass.circle", "person.circle"]
-        //
-        //        for i in 0...2 {
-        //            items[i].image = UIImage(systemName: images[i])
-        //        }
-        //
-        //        tab.modalPresentationStyle = .fullScreen
-        //
-        //        navigationController?.present(tab, animated: true)
-        
-    }
-    
-    private func showAlertWithWarning(_ warning: String) {
-        let alert = UIAlertController(title: "Warning", message: warning, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-        self.present(alert, animated: true, completion: nil)
-    }
-    
-    @objc private func eyeButtonForPasswordPressed() {
-        let imageName = isEyeButtonForPasswordPrivate ? "eye" : "eye.slash"
-        passwordTextField.isSecureTextEntry.toggle()
-        eyeButtonForPassword.setImage(UIImage(systemName: imageName), for: .normal)
-        isEyeButtonForPasswordPrivate.toggle()
+        output.viewDidTapButton(username: usernameTextField.text ?? "", email: emailTextField.text ?? "", password: passwordTextField.text ?? "")
     }
     
 }
@@ -144,11 +57,9 @@ private extension RegisterViewController {
     func setupView() {
         view.backgroundColor = .white
         addSubViews()
-        addActions()
         
         configureLabels()
         configureSignUpButton()
-        configureSignInButton()
         configureTextFields()
     }
 }
@@ -157,15 +68,9 @@ private extension RegisterViewController {
 
 private extension RegisterViewController {
     func addSubViews() {
-        view.addSubview(askLabel)
         view.addSubview(registrationLabel)
         
-        view.addSubview(signInButton)
         view.addSubview(signUpButton)
-    }
-    
-    func addActions() {
-        eyeButtonForPassword.addTarget(self, action: #selector(self.eyeButtonForPasswordPressed), for: .touchUpInside)
     }
     
     func configureLabels() {
@@ -174,12 +79,6 @@ private extension RegisterViewController {
         registrationLabel.textAlignment = .center
         registrationLabel.font = .systemFont(ofSize: 30)
         setLabelConstraints(toItem: registrationLabel, topAnchorConstraint: 10)
-        
-        askLabel.textColor = .black
-        askLabel.text = "Already have an account?"
-        askLabel.textAlignment = .center
-        askLabel.font = .systemFont(ofSize: 22)
-        setLabelConstraints(toItem: askLabel, topAnchorConstraint: 440)
     }
     
     func configureTextFields() {
@@ -188,7 +87,6 @@ private extension RegisterViewController {
         emailTextField.keyboardType = .emailAddress
         passwordTextField.autocapitalizationType = .none
         passwordTextField.isSecureTextEntry = true
-        passwordTextField.rightView = eyeButtonForPassword
         passwordTextField.rightViewMode = .always
         
         let stackView = UIStackView()
@@ -208,16 +106,6 @@ private extension RegisterViewController {
         stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 30).isActive = true
     }
     
-    func configureSignInButton() {
-        signInButton.setTitle("Sign in", for: .normal)
-        signInButton.setTitleColor(UIColor.white, for: .normal)
-        signInButton.titleLabel?.font = .systemFont(ofSize: 20)
-        setButtonConstraints(toItem: signInButton, topAnchorConstraint: 480)
-        signInButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        signInButton.layer.cornerRadius = 10
-        signInButton.layer.backgroundColor = UIColor.black.cgColor
-        signInButton.addTarget(self, action:#selector(self.signInButtonClicked), for: .touchUpInside)
-    }
     
     func configureSignUpButton() {
         signUpButton.setTitle("Sign up", for: .normal)
@@ -251,4 +139,21 @@ private extension RegisterViewController {
         ])
         toItem.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
+}
+
+extension RegisterViewController: RegisterViewInput {
+    func display(status: AuthCases) {
+        switch status {
+        case .success:
+            let alert = UIAlertController(title: "Success!", message: "", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        case .failure:
+            let alert = UIAlertController(title: "Warning", message: "Invalid data", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    
 }
